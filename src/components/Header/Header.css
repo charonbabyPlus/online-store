@@ -1,0 +1,97 @@
+.header {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 1rem; 
+  background-color: #388E3C;
+  color: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header-left {
+  display: flex; 
+  align-items: center; 
+  gap: 1px; 
+}
+
+.logo {
+  width: 50px; 
+  height: 40px;
+}
+
+h1 {
+  margin: 0; 
+  font-size: 1.5rem; 
+}
+
+.nav ul {
+  display: flex; 
+  list-style: none; 
+  margin: 0; 
+  padding: 0; 
+  gap: 1rem; 
+}
+
+.nav a {
+  text-decoration: none; 
+  color: #ffffff; 
+}
+
+.nav a:hover {
+  text-decoration: underline; 
+}
+
+.search-container {
+  max-width: 800px;
+  margin: 20px auto;
+  position: relative;
+}
+
+.search-input {
+  width: 100%;
+  padding: 16px 60px 16px 20px;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-family: 'Kanit', sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  color: #333;
+  transition: all 0.3s ease;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23757575" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>');
+  background-repeat: no-repeat;
+  background-position: 95% center;
+  background-size: 20px;
+}
+
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 4px 16px rgba(56, 142, 60, 0.2);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23388E3C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>');
+}
+
+.search-input::placeholder {
+  color: #9E9E9E;
+  font-weight: 300;
+}
+
+.search-button {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #388E3C;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 12px 20px;
+  cursor: pointer;
+  font-family: 'Kanit', sans-serif;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.search-button:hover {
+  background: #2E7D32;
+  transform: translateY(-50%) scale(1.02);
+}
