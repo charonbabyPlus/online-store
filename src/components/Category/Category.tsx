@@ -1,32 +1,23 @@
-import React from "react";
-import { useState } from "react";
 import './Category.css'
+import { useNavigate } from "react-router-dom";
+import { categories } from "./catList";
 
-const Category = ({ name, items } : {name: string, items:string[]}) => {
-    const [isOpen, setIsOpen] = useState(false);
-  
+
+const Category = () => {
+   
+    const navigate = useNavigate()
     return (
       <div className="category">
-        <div 
-          className="category-header" 
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <h3>{name}</h3>
-          <span className="category-icon">
-            {isOpen ? '−' : '+'}
-          </span>
+        
+         {categories.map((item) => (
+          <div className="category-item" onClick={() => navigate(`/categories/${item.id}`)}>
+            <img src={item.img} alt={item.name} />
+            <p>{item.name}</p>
+          </div>
+         ))}
         </div>
         
-        {isOpen && (
-          <ul className="category-items">
-            {items.map((item, index) => (
-              <li key={index} className="category-item">
-                {item}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+        
     );
   }
 

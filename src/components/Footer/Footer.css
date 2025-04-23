@@ -1,10 +1,13 @@
 .footer {
+    position: sticky;
+    bottom: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
     background-color: #2E7D32;
     color: white;
+    z-index: 100;
 }
 
 .footer-left {

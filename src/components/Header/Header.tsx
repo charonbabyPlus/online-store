@@ -1,36 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Header.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ROUTES } from '../../utils/routes';
 
 export default function Header() {
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`${ROUTES.SEARCH}?q=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery('');
+    }
+  };
+
   return (
     <header className="header">
         <div className="header-left">
-            <h1>BlinkBasket</h1>
-            <Link to={ROUTES.HOME}>
+            <Link to={ROUTES.HOME} className="logo-link">
                 <img
                     src="/header/logo.png"
                     alt="логотип"
                     className="logo"
                 />
+                <h1>BlinkBasket</h1>
             </Link>
         </div>
 
         <div className='search-container'>
-            <form>
-                <input type="search" name="search"
-                placeholder='Поиск'
-                autoComplete='off'
-                onChange={() => {}}
-                value=''
-                className='search-input'
+            <form onSubmit={handleSearch}>
+                <input 
+                    type="search" 
+                    name="search"
+                    placeholder='Поиск'
+                    autoComplete='off'
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={searchQuery}
+                    className='search-input'
                 />
-                <button className="search-button">Поиск</button>
+                <button type="submit" className="search-button">Поиск</button>
             </form>
         </div>
         
-
         <nav className="nav">
             <ul>
                 <li><Link to={ROUTES.HOME}>Главная</Link></li>
