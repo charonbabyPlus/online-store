@@ -5,4 +5,5 @@ export interface IProducts {
     image: string;
     price: number;
     calories: number;
+    description: string;
 }

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { productList } from "./productList";
+import ProductDetails from "./ProductDetails";
 import './Product.css';
 
 const Products = () => {
     const { categoryId } = useParams<{ categoryId: string }>();
     const [cart, setCart] = useState<Record<number, number>>({});
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+    const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
 
     // Фильтрация товаров по категории
     let filteredProducts = productList.filter(
@@ -45,6 +47,18 @@ const Products = () => {
         });
     };
 
+    const showProductDetails = (productId: number) => {
+        setSelectedProductId(productId);
+    };
+
+    const closeProductDetails = () => {
+        setSelectedProductId(null);
+    };
+
+    const selectedProduct = selectedProductId 
+        ? productList.find(p => p.id === selectedProductId) 
+        : null;
+
     return (
         <section className="products-container">
             <div className="products-header">
@@ -60,7 +74,11 @@ const Products = () => {
             </div>
             <div className="products-grid">
                 {filteredProducts.map((product) => (
-                    <div key={product.id} className="product-card">
+                    <div 
+                        key={product.id} 
+                        className="product-card"
+                        onClick={() => showProductDetails(product.id)}
+                    >
                         <div className="product-image-container">
                             <img 
                                 src={product.image} 
@@ -74,15 +92,15 @@ const Products = () => {
                             <p className="product-calories">{product.calories} ккал</p>
                         </div>
                         {cart[product.id] ? (
-                            <div className="quantity-controls">
-                                <button onClick={() => decrement(product.id)}>-</button>
+                            <div className="quantity-controls" onClick={e => e.stopPropagation()}>
+                                <button className="quantity-btn decrement-btn" onClick={(e) => { e.stopPropagation(); decrement(product.id); }}>-</button>
                                 <span>{cart[product.id]}</span>
-                                <button onClick={() => increment(product.id)}>+</button>
+                                <button className="quantity-btn increment-btn" onClick={(e) => { e.stopPropagation(); increment(product.id); }}>+</button>
                             </div>
                         ) : (
                             <button 
                                 className="buy-button"
-                                onClick={() => addToCart(product.id)}
+                                onClick={(e) => { e.stopPropagation(); addToCart(product.id); }}
                             >
                                 Купить
                             </button>
@@ -90,6 +108,18 @@ const Products = () => {
                     </div>
                 ))}
             </div>
+
+            {/* Модальное окно с описанием товара */}
+            {selectedProduct && (
+                <ProductDetails
+                    product={selectedProduct}
+                    cartCount={cart[selectedProduct.id] || 0}
+                    onAddToCart={() => addToCart(selectedProduct.id)}
+                    onIncrement={() => increment(selectedProduct.id)}
+                    onDecrement={() => decrement(selectedProduct.id)}
+                    onClose={closeProductDetails}
+                />
+            )}
         </section>
     );
 };
