@@ -95,3 +95,21 @@ h1 {
   background: #2E7D32;
   transform: translateY(-50%) scale(1.02);
 }
+
+.logo-link {
+  text-decoration: none; 
+  color: inherit; 
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px; 
+}
+
+.shop-title {
+  margin: 0;
+  font-size: 1.5rem;
+  color: white !important; 
+  font-weight: normal;
+}

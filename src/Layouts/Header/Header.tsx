@@ -19,12 +19,14 @@ export default function Header() {
     <header className="header">
         <div className="header-left">
             <Link to={ROUTES.HOME} className="logo-link">
-                <img
+                <div className="logo-container">
+                    <img
                     src="/header/logo.png"
                     alt="логотип"
                     className="logo"
-                />
-                <h1>BlinkBasket</h1>
+                    />
+                    <h1 className="shop-title">BlinkBasket</h1>
+                </div>
             </Link>
         </div>
 

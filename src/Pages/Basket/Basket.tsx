@@ -1,38 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from './CartContext';
-import ProductDetails from '../Products/ProductDetails'; // Импортируем компонент ProductDetails
-import { IProducts } from '../../Interface/ProdInterface'; // Импортируем интерфейс
+import ProductDetails from '../Products/ProductDetails';
+import ProductCard from '../ProductCard/ProductCard';
+import { IProducts } from '../../Interface/ProdInterface';
 import './Basket.css';
 
-const Basket = () => {
-  const { cart, filteredProducts, increment, decrement } = useCart();
-  const [selectedProduct, setSelectedProduct] = useState<IProducts | null>(null); // Указываем тип для selectedProduct
+const Basket: React.FC = () => {
+  const { cart, filteredProducts, increment, decrement, removeFromCart } = useCart();
+  const [selectedProduct, setSelectedProduct] = useState<IProducts | null>(null);
+
+  useEffect(() => {
+    console.log('Current cart:', cart);
+    console.log('Filtered products:', filteredProducts);
+  }, [cart, filteredProducts]);
 
   const cartItems = Object.entries(cart).map(([productId, quantity]) => {
-    const product = filteredProducts.find(p => p.id === Number(productId));
+    const product = filteredProducts.find((p) => p.id === Number(productId));
+    console.log(`Processing productId: ${productId}, found:`, product);
     return { product, quantity };
   });
 
-  // Считаем общее количество калорий и общую сумму
-  const totalCalories = cartItems.reduce((total, { product, quantity }) => {
-    return total + (product ? product.calories * quantity : 0);
-  }, 0);
+  const totalCalories = cartItems.reduce(
+    (total, { product, quantity }) => total + (product ? product.calories * quantity : 0),
+    0
+  );
 
-  const totalPrice = cartItems.reduce((total, { product, quantity }) => {
-    return total + (product ? product.price * quantity : 0);
-  }, 0);
+  const totalPrice = cartItems.reduce(
+    (total, { product, quantity }) => total + (product ? product.price * quantity : 0),
+    0
+  );
 
-  const handleRemove = (productId: number) => {
-    decrement(productId); // Уменьшаем количество до 0, что удалит товар из корзины
-  };
-
-  const handleProductClick = (product: IProducts) => {
-    setSelectedProduct(product);
-  };
-
-  const closeProductDetails = () => {
-    setSelectedProduct(null);
-  };
+  const handleProductClick = (product: IProducts) => setSelectedProduct(product);
+  const closeProductDetails = () => setSelectedProduct(null);
 
   return (
     <div className="basket-container">
@@ -40,39 +39,31 @@ const Basket = () => {
       <div className="total-calories">Общее количество калорий: {totalCalories} ккал</div>
       <div className="total-price">Общая сумма: {totalPrice} ₽</div>
       <div className="basket-grid">
-        {cartItems.map(({ product, quantity }) => (
-          product ? ( // Проверяем, что product определен
-            <div key={product.id} className="product-card" onClick={() => handleProductClick(product)}>
-              <div className="product-image-container">
-                <img 
-                  src={product.image} 
-                  alt={product.title} 
-                  className="product-image"
-                />
-              </div>
-              <div className="product-details">
-                <h3 className="product-title">{product.title}</h3>
-                <p className="product-price">{product.price} ₽</p>
-                <p className="product-calories">{product.calories} ккал</p>
-                <p className="product-quantity">Количество: {quantity}</p>
-                <div className="quantity-controls">
-                  <button className="quantity-btn decrement-btn" onClick={() => handleRemove(product.id)}>
-                    🗑️ {/* Символ корзины */}
-                  </button>
-                  <button className="quantity-btn decrement-btn" onClick={() => decrement(product.id)}>-</button>
-                  <span>{quantity}</span>
-                  <button className="quantity-btn increment-btn" onClick={() => increment(product.id)}>+</button>
-                </div>
-              </div>
-            </div>
-          ) : null
-        ))}
+        {cartItems.map(
+          ({ product, quantity }) =>
+            product && (
+              <ProductCard
+                key={product.id}
+                product={product}
+                cartCount={quantity}
+                onAddToCart={() => increment(product.id)}
+                onIncrement={() => increment(product.id)}
+                onDecrement={() => decrement(product.id)}
+                onRemove={() => {
+                  console.log(`Triggering remove for product ${product.id}`);
+                  removeFromCart(product.id);
+                }}
+                onClick={() => handleProductClick(product)}
+                showRemoveButton={true}
+              />
+            )
+        )}
       </div>
       {selectedProduct && (
         <ProductDetails
           product={selectedProduct}
           cartCount={cart[selectedProduct.id] || 0}
-          onAddToCart={() => increment(selectedProduct.id)} // Измените на addToCart, если нужно
+          onAddToCart={() => increment(selectedProduct.id)}
           onIncrement={() => increment(selectedProduct.id)}
           onDecrement={() => decrement(selectedProduct.id)}
           onClose={closeProductDetails}

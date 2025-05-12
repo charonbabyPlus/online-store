@@ -1,80 +1,66 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { productList } from '../Products/productList';
-import { IProducts } from '../../Interface/ProdInterface';
 import { useCart } from '../Basket/CartContext';
+import ProductCard from '../ProductCard/ProductCard';
+import ProductDetails from '../Products/ProductDetails';
+import '../Products/Product.css';
 
+const SearchPage: React.FC = () => {
+  const { cart, addToCart, filteredProducts, decrement, increment, removeFromCart } = useCart();
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
 
-const SearchPage = () => {
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const searchTerm = queryParams.get('q')?.toLowerCase() || '';
-    const { cart, addToCart, filteredProducts, decrement, increment } = useCart(); // <-- Берём из контекста
-    const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
-    
-    let sortedProducts = [...filteredProducts];
-    if (sortOrder) {
-      sortedProducts.sort((a, b) =>
+  const sortedProducts = sortOrder
+    ? [...filteredProducts].sort((a, b) =>
         sortOrder === 'asc' ? a.price - b.price : b.price - a.price
-      );
-    }
+      )
+    : filteredProducts;
 
   const toggleSortOrder = () => {
-    setSortOrder(prev => {
-      if (prev === null) return 'asc';
-      if (prev === 'asc') return 'desc';
-      return null;
-    });
+    setSortOrder((prev) => (prev === null ? 'asc' : prev === 'asc' ? 'desc' : null));
   };
+
+  const selectedProduct = selectedProductId
+    ? filteredProducts.find((p) => p.id === selectedProductId)
+    : null;
 
   return (
     <div className="search-results">
       <div className="products-header">
-        <h2>Результаты поиска: "{searchTerm}"</h2>
-        <button 
+        <h2>Результаты поиска</h2>
+        <button
           onClick={toggleSortOrder}
           className={`sort-button ${sortOrder ? 'active' : ''}`}
         >
-          {sortOrder === 'asc' ? 'По возрастанию цены ↓' : 
-           sortOrder === 'desc' ? 'По убыванию цены ↑' : 
-           'Сортировать по цене'}
+          {sortOrder === 'asc' ? 'По возрастанию цены ↓' : sortOrder === 'desc' ? 'По убыванию цены ↑' : 'Сортировать по цене'}
         </button>
       </div>
-      {filteredProducts.length > 0 ? (
+      {sortedProducts.length > 0 ? (
         <div className="products-grid">
-          {filteredProducts.map(product => (
-            <div key={product.id} className="product-card">
-              <div className="product-image-container">
-                <img 
-                  src={product.image} 
-                  alt={product.title} 
-                  className="product-image"
-                />
-              </div>
-              <div className="product-details">
-                <h3 className="product-title">{product.title}</h3>
-                <p className="product-price">{product.price} ₽</p>
-                <p className="product-calories">{product.calories} ккал</p>
-              </div>
-              {cart[product.id] ? (
-                <div className="quantity-controls">
-                  <button onClick={() => decrement(product.id)}>-</button>
-                  <span>{cart[product.id]}</span>
-                  <button onClick={() => increment(product.id)}>+</button>
-                </div>
-              ) : (
-                <button 
-                  className="buy-button"
-                  onClick={() => addToCart(product.id)}
-                >
-                  Купить
-                </button>
-              )}
-            </div>
+          {sortedProducts.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              cartCount={cart[product.id]}
+              onAddToCart={() => addToCart(product.id)}
+              onIncrement={() => increment(product.id)}
+              onDecrement={() => decrement(product.id)}
+              onRemove={() => removeFromCart(product.id)}
+              onClick={() => setSelectedProductId(product.id)}
+            />
           ))}
         </div>
       ) : (
         <p>Ничего не найдено</p>
+      )}
+      {selectedProduct && (
+        <ProductDetails
+          product={selectedProduct}
+          cartCount={cart[selectedProduct.id] || 0}
+          onAddToCart={() => addToCart(selectedProduct.id)}
+          onIncrement={() => increment(selectedProduct.id)}
+          onDecrement={() => decrement(selectedProduct.id)}
+          onClose={() => setSelectedProductId(null)}
+        />
       )}
     </div>
   );
