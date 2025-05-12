@@ -3,42 +3,25 @@ import { useParams } from "react-router-dom";
 import { productList } from "./productList";
 import ProductDetails from "./ProductDetails";
 import './Product.css';
+import { useCart } from "../Basket/CartContext";
 
 const Products = () => {
     const { categoryId } = useParams<{ categoryId: string }>();
-    const [cart, setCart] = useState<Record<number, number>>({});
+    const { cart, addToCart, increment, decrement } = useCart(); // <-- Берём из контекста
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
     const [selectedProductId, setSelectedProductId] = useState<number | null>(null);
-
-    // Фильтрация товаров по категории
+  
     let filteredProducts = productList.filter(
-        product => product.categoryId === parseInt(categoryId || '0')
+      product => product.categoryId === parseInt(categoryId || '0')
     );
-
-    // Сортировка товаров по цене
+  
     if (sortOrder) {
-        filteredProducts = [...filteredProducts].sort((a, b) => {
-            return sortOrder === 'asc' ? a.price - b.price : b.price - a.price;
-        });
+      filteredProducts = [...filteredProducts].sort((a, b) => 
+        sortOrder === 'asc' ? a.price - b.price : b.price - a.price
+      );
     }
-
-    const addToCart = (productId: number) => {
-        setCart(prev => ({ ...prev, [productId]: (prev[productId] || 0) + 1 }));
-    };
-
-    const increment = (productId: number) => {
-        setCart(prev => ({ ...prev, [productId]: (prev[productId] || 0) + 1 }));
-    };
-
-    const decrement = (productId: number) => {
-        setCart(prev => {
-            const newQuantity = (prev[productId] || 0) - 1;
-            return newQuantity <= 0 
-                ? Object.fromEntries(Object.entries(prev).filter(([id]) => id !== productId.toString()))
-                : { ...prev, [productId]: newQuantity };
-        });
-    };
-
+  
+  
     const toggleSortOrder = () => {
         setSortOrder(prev => {
             if (prev === null) return 'asc';
@@ -108,8 +91,6 @@ const Products = () => {
                     </div>
                 ))}
             </div>
-
-            {/* Модальное окно с описанием товара */}
             {selectedProduct && (
                 <ProductDetails
                     product={selectedProduct}

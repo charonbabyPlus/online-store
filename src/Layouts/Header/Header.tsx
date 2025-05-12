@@ -46,7 +46,7 @@ export default function Header() {
         <nav className="nav">
             <ul>
                 <li><Link to={ROUTES.HOME}>Главная</Link></li>
-                <li><Link to={ROUTES.CART}>Профиль</Link></li>
+                {/* <li><Link to={ROUTES.CART}>Профиль</Link></li> */}
                 <li><Link to={ROUTES.BASKET}>Корзина</Link></li>
             </ul>
         </nav>

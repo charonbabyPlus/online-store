@@ -2,42 +2,22 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { productList } from '../Products/productList';
 import { IProducts } from '../../Interface/ProdInterface';
+import { useCart } from '../Basket/CartContext';
+
 
 const SearchPage = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const searchTerm = queryParams.get('q')?.toLowerCase() || '';
-  const [cart, setCart] = useState<Record<number, number>>({});
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
-
-  // Фильтрация товаров по поисковому запросу
-  let filteredProducts = productList.filter((product: IProducts) => 
-    product.title.toLowerCase().includes(searchTerm)
-  );
-
-  // Сортировка товаров по цене
-  if (sortOrder) {
-    filteredProducts = [...filteredProducts].sort((a, b) => {
-      return sortOrder === 'asc' ? a.price - b.price : b.price - a.price;
-    });
-  }
-
-  const addToCart = (productId: number) => {
-    setCart(prev => ({ ...prev, [productId]: (prev[productId] || 0) + 1 }));
-  };
-
-  const increment = (productId: number) => {
-    setCart(prev => ({ ...prev, [productId]: (prev[productId] || 0) + 1 }));
-  };
-
-  const decrement = (productId: number) => {
-    setCart(prev => {
-      const newQuantity = (prev[productId] || 0) - 1;
-      return newQuantity <= 0 
-        ? Object.fromEntries(Object.entries(prev).filter(([id]) => id !== productId.toString()))
-        : { ...prev, [productId]: newQuantity };
-    });
-  };
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const searchTerm = queryParams.get('q')?.toLowerCase() || '';
+    const { cart, addToCart, filteredProducts, decrement, increment } = useCart(); // <-- Берём из контекста
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+    
+    let sortedProducts = [...filteredProducts];
+    if (sortOrder) {
+      sortedProducts.sort((a, b) =>
+        sortOrder === 'asc' ? a.price - b.price : b.price - a.price
+      );
+    }
 
   const toggleSortOrder = () => {
     setSortOrder(prev => {
