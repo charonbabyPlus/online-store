@@ -10,7 +10,7 @@ export default function Header() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`${ROUTES.SEARCH}?q=${encodeURIComponent(searchQuery.trim())}`);
+      navigate(`${ROUTES.SEARCH}?q=${(searchQuery.trim())}`);
       setSearchQuery('');
     }
   };

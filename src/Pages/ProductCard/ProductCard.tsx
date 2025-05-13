@@ -36,17 +36,13 @@ const ProductCard: React.FC<ProductCardProps> = ({
       <div className="quantity-controls" onClick={(e) => e.stopPropagation()}>
         <button
           className="quantity-btn decrement-btn"
-          onClick={onDecrement}
-          aria-label={`Уменьшить количество ${product.title}`}
-        >
+          onClick={onDecrement}>
           -
         </button>
         <span>{cartCount}</span>
         <button
           className="quantity-btn increment-btn"
-          onClick={onIncrement}
-          aria-label={`Увеличить количество ${product.title}`}
-        >
+          onClick={onIncrement}>
           +
         </button>
         {showRemoveButton && (
@@ -55,9 +51,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             onClick={() => {
               console.log(`Removing product ${product.id}`);
               onRemove?.();
-            }}
-            aria-label={`Удалить ${product.title} из корзины`}
-          >
+            }}>
             🗑️
           </button>
         )}
@@ -68,9 +62,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         onClick={(e) => {
           e.stopPropagation();
           onAddToCart?.();
-        }}
-        aria-label={`Добавить ${product.title} в корзину`}
-      >
+        }}>
         Купить
       </button>
     )}
