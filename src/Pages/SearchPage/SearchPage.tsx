@@ -4,7 +4,7 @@ import ProductCard from '../ProductCard/ProductCard';
 import ProductDetails from '../Products/ProductDetails';
 import '../Products/Product.css';
 
-const SearchPage: React.FC = () => {
+const SearchPage = () => {
   const { cart, addToCart, filteredProducts, decrement, increment, removeFromCart } = useCart();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
   const [selectedProductId, setSelectedProductId] = useState<number | null>(null);

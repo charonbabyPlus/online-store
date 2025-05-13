@@ -7,10 +7,11 @@ import SearchPage from "../Pages/SearchPage/SearchPage";
 import Basket from "../Pages/Basket/Basket";
 import { ROUTES } from "../utils/routes"; 
 import { CartProvider } from "../Pages/Basket/CartContext";
+import Profile from "../Pages/Profile/Profile";
 
-// Обернём AppRoutes в ещё один компонент, чтобы использовать useLocation
+
 const AppRoutes = () => {
-  const location = useLocation(); // ✅ Теперь location доступен через хук
+  const location = useLocation(); 
   const searchTerm = new URLSearchParams(location.search).get('q') || '';
 
   return (
@@ -19,6 +20,7 @@ const AppRoutes = () => {
         {/* pages */}
         <Route path={ROUTES.HOME} element={<Home />} />
         <Route path={ROUTES.CATEGORIES} element={<Category />} />
+        <Route path={ROUTES.PROFILE} element={<Profile />} />
         <Route path={ROUTES.CATEGORY} element={<Products />} />
         <Route path={ROUTES.SEARCH} element={<SearchPage />} />
         <Route path={ROUTES.BASKET} element={<Basket />} />

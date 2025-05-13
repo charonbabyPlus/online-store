@@ -6,7 +6,7 @@ import ProductCard from '../ProductCard/ProductCard';
 import './Product.css';
 import { useCart } from '../Basket/CartContext';
 
-const Products: React.FC = () => {
+const Products = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const { cart, addToCart, increment, decrement, removeFromCart } = useCart();
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);

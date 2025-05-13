@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from './CartContext';
 import ProductDetails from '../Products/ProductDetails';
 import ProductCard from '../ProductCard/ProductCard';
 import { IProducts } from '../../Interface/ProdInterface';
 import './Basket.css';
 
-const Basket: React.FC = () => {
-  const { cart, filteredProducts, increment, decrement, removeFromCart } = useCart();
+const Basket = () => {
+  const { cart, filteredProducts, increment, decrement, removeFromCart, completePurchase } = useCart();
   const [selectedProduct, setSelectedProduct] = useState<IProducts | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log('Current cart:', cart);
@@ -33,11 +35,23 @@ const Basket: React.FC = () => {
   const handleProductClick = (product: IProducts) => setSelectedProduct(product);
   const closeProductDetails = () => setSelectedProduct(null);
 
+  const handlePurchase = () => {
+    if (cartItems.length === 0) {
+      alert('Корзина пуста!');
+      navigate('/categories'); 
+    }
+    completePurchase();
+    alert('Покупка завершена! История сохранена в профиле.');
+  };
+
   return (
     <div className="basket-container">
       <h2>Корзина</h2>
       <div className="total-calories">Общее количество калорий: {totalCalories} ккал</div>
       <div className="total-price">Общая сумма: {totalPrice} ₽</div>
+      <button onClick={handlePurchase} className="purchase-button">
+        Купить
+      </button>
       <div className="basket-grid">
         {cartItems.map(
           ({ product, quantity }) =>
