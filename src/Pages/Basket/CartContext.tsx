@@ -8,6 +8,12 @@ interface Purchase {
   date: string;
 }
 
+interface CardDetails {
+  cardNumber: string;
+  expiryDate: string;
+  cvv: string;
+}
+
 interface CartContextType {
   cart: Record<number, number>;
   addToCart: (productId: number) => void;
@@ -17,6 +23,10 @@ interface CartContextType {
   completePurchase: () => void;
   purchaseHistory: Purchase[];
   filteredProducts: IProducts[];
+  cardDetails: CardDetails;
+  setCardDetails: (details: CardDetails) => void;
+  deliveryAddress: string;
+  setDeliveryAddress: (address: string) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -45,15 +55,40 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children, searchTerm
     return savedHistory ? JSON.parse(savedHistory) : [];
   });
 
+  const [cardDetails, setCardDetails] = useState<CardDetails>(() => {
+    const saved = localStorage.getItem('cardDetails');
+    return saved ? JSON.parse(saved) : { cardNumber: '', expiryDate: '', cvv: '' };
+  });
+
+  const [deliveryAddress, setDeliveryAddress] = useState<string>(() => {
+    const saved = localStorage.getItem('deliveryAddress');
+    return saved ? saved : '';
+  });
+
   const filteredProducts = productList.filter((product) =>
     product.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const saveCartToLocalStorage = (newCart: Record<number, number>) => {
+    localStorage.setItem('cart', JSON.stringify(newCart));
+  };
+
+  const savePurchaseHistoryToLocalStorage = (newHistory: Purchase[]) => {
+    localStorage.setItem('purchaseHistory', JSON.stringify(newHistory));
+  };
+
+  const saveCardDetailsToLocalStorage = (details: CardDetails) => {
+    localStorage.setItem('cardDetails', JSON.stringify(details));
+  };
+
+  const saveDeliveryAddressToLocalStorage = (address: string) => {
+    localStorage.setItem('deliveryAddress', JSON.stringify(address));
+  };
+
   const addToCart = (productId: number) => {
     setCart((prev) => {
       const newCart = { ...prev, [productId]: (prev[productId] || 0) + 1 };
-      localStorage.setItem('cart', JSON.stringify(newCart));
-      console.log('Cart after addToCart:', newCart);
+      saveCartToLocalStorage(newCart);
       return newCart;
     });
   };
@@ -61,8 +96,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children, searchTerm
   const increment = (productId: number) => {
     setCart((prev) => {
       const newCart = { ...prev, [productId]: (prev[productId] || 0) + 1 };
-      localStorage.setItem('cart', JSON.stringify(newCart));
-      console.log('Cart after increment:', newCart);
+      saveCartToLocalStorage(newCart);
       return newCart;
     });
   };
@@ -70,17 +104,14 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children, searchTerm
   const decrement = (productId: number) => {
     setCart((prev) => {
       const newQuantity = (prev[productId] || 0) - 1;
-      console.log(`Decrementing product ${productId}, newQuantity: ${newQuantity}`);
       if (newQuantity <= 0) {
         const newCart = { ...prev };
         delete newCart[productId];
-        localStorage.setItem('cart', JSON.stringify(newCart));
-        console.log('Cart after remove in decrement:', newCart);
+        saveCartToLocalStorage(newCart);
         return newCart;
       }
       const newCart = { ...prev, [productId]: newQuantity };
-      localStorage.setItem('cart', JSON.stringify(newCart));
-      console.log('Cart after decrement:', newCart);
+      saveCartToLocalStorage(newCart);
       return newCart;
     });
   };
@@ -89,8 +120,7 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children, searchTerm
     setCart((prev) => {
       const newCart = { ...prev };
       delete newCart[productId];
-      localStorage.setItem('cart', JSON.stringify(newCart));
-      console.log(`Removed product ${productId} from cart:`, newCart);
+      saveCartToLocalStorage(newCart);
       return newCart;
     });
   };
@@ -114,13 +144,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children, searchTerm
 
     setPurchaseHistory((prev) => {
       const newHistory = [...prev, purchase];
-      localStorage.setItem('purchaseHistory', JSON.stringify(newHistory));
+      savePurchaseHistoryToLocalStorage(newHistory);
       return newHistory;
     });
     setCart({});
-    localStorage.setItem('cart', JSON.stringify({}));
-    console.log('Purchase completed:', purchase);
-    console.log('New purchase history:', [...purchaseHistory, purchase]);
+    saveCartToLocalStorage({});
   };
 
   return (
@@ -134,6 +162,16 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children, searchTerm
         completePurchase,
         purchaseHistory,
         filteredProducts,
+        cardDetails,
+        setCardDetails: (details) => {
+          setCardDetails(details);
+          saveCardDetailsToLocalStorage(details);
+        },
+        deliveryAddress,
+        setDeliveryAddress: (address) => {
+          setDeliveryAddress(address);
+          saveDeliveryAddressToLocalStorage(address);
+        },
       }}
     >
       {children}

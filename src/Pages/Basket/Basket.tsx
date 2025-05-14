@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from './CartContext';
 import ProductDetails from '../Products/ProductDetails';
@@ -7,14 +7,9 @@ import { IProducts } from '../../Interface/ProdInterface';
 import './Basket.css';
 
 const Basket = () => {
-  const { cart, filteredProducts, increment, decrement, removeFromCart, completePurchase } = useCart();
+  const { cart, filteredProducts, increment, decrement, removeFromCart, completePurchase, cardDetails, deliveryAddress } = useCart();
   const [selectedProduct, setSelectedProduct] = useState<IProducts | null>(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    console.log('Current cart:', cart);
-    console.log('Filtered products:', filteredProducts);
-  }, [cart, filteredProducts]);
 
   const cartItems = Object.entries(cart).map(([productId, quantity]) => {
     const product = filteredProducts.find((p) => p.id === Number(productId));
@@ -38,7 +33,18 @@ const Basket = () => {
   const handlePurchase = () => {
     if (cartItems.length === 0) {
       alert('Корзина пуста!');
-      navigate('/categories'); 
+      navigate('/categories');
+      return;
+    }
+    if (
+      !cardDetails.cardNumber ||
+      !cardDetails.expiryDate ||
+      !cardDetails.cvv ||
+      !deliveryAddress
+    ) {
+      alert('Пожалуйста, внесите данные карты и адрес доставки');
+      navigate('/profile');
+      return;
     }
     completePurchase();
     alert('Покупка завершена! История сохранена в профиле.');

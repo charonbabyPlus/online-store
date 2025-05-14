@@ -1,21 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../Basket/CartContext';
+import ProductCard from '../ProductCard/ProductCard';
 import './Profile.css';
 
 const Profile = () => {
-  const { purchaseHistory } = useCart();
+  const { purchaseHistory, addToCart, cart, cardDetails, setCardDetails, deliveryAddress, setDeliveryAddress } = useCart();
+  const [showMessage, setShowMessage] = useState(false);
 
-  const [cardDetails, setCardDetails] = useState(() => {
-    const saved = localStorage.getItem('cardDetails');
-    return saved
-      ? JSON.parse(saved)
-      : { cardNumber: '', expiryDate: '', cvv: '' };
-  });
-
-  const [deliveryAddress, setDeliveryAddress] = useState(() => {
-    const saved = localStorage.getItem('deliveryAddress');
-    return saved || '';
-  });
+  useEffect(() => {
+    if (!cardDetails.cardNumber || !cardDetails.expiryDate || !cardDetails.cvv || !deliveryAddress) {
+      setShowMessage(true);
+      const timer = setTimeout(() => setShowMessage(false), 5000); 
+      return () => clearTimeout(timer);
+    }
+  }, [cardDetails, deliveryAddress]);
 
   const handleCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -40,11 +38,17 @@ const Profile = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    localStorage.setItem('cardDetails', JSON.stringify(cardDetails));
-    localStorage.setItem('deliveryAddress', deliveryAddress);
-    console.log('Card Details:', cardDetails);
-    console.log('Delivery Address:', deliveryAddress);
     alert('Данные сохранены!');
+    setShowMessage(false);
+  };
+
+  const handleRepeatOrder = (items: { product: { id: number }; quantity: number }[]) => {
+    items.forEach(({ product, quantity }) => {
+      for (let i = 0; i < quantity; i++) {
+        addToCart(product.id);
+      }
+    });
+    alert('Товары добавлены в корзину!');
   };
 
   return (
@@ -53,6 +57,11 @@ const Profile = () => {
       <div className="profile-content">
         <div className="profile-form">
           <h3>Данные карты</h3>
+          {showMessage && (
+            <div className="error-message">
+              Пожалуйста, внесите данные карты и адрес доставки
+            </div>
+          )}
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="cardNumber">Номер карты</label>
@@ -74,7 +83,7 @@ const Profile = () => {
                 name="expiryDate"
                 value={cardDetails.expiryDate}
                 onChange={handleCardChange}
-                placeholder="MM/YY"
+                placeholder="ММ/ГГ"
                 maxLength={5}
               />
             </div>
@@ -98,7 +107,7 @@ const Profile = () => {
                 name="deliveryAddress"
                 value={deliveryAddress}
                 onChange={handleAddressChange}
-                placeholder="г. Москва, ул. Примерная, д. 1"
+                placeholder="г. Омск ул. Зорге д.242"
               />
             </div>
             <button type="submit" className="save-button">
@@ -109,22 +118,35 @@ const Profile = () => {
         <div className="purchase-history">
           <h3>История покупок</h3>
           {purchaseHistory.length > 0 ? (
-            <ul>
+            <div className="purchase-history-list">
               {purchaseHistory.map((purchase, index) => (
-                <li key={index} className="purchase-item">
+                <div key={index} className="purchase-item">
                   <p><strong>Дата:</strong> {purchase.date}</p>
                   <p><strong>Сумма:</strong> {purchase.totalPrice} ₽</p>
-                  <p><strong>Товары:</strong></p>
-                  <ul>
+                  <div className="purchase-items-grid">
                     {purchase.items.map((item) => (
-                      <li key={item.product.id}>
-                        {item.product.title} - {item.quantity} шт. ({item.product.price} ₽/шт.)
-                      </li>
+                      <ProductCard
+                        key={item.product.id}
+                        product={item.product}
+                        cartCount={item.quantity}
+                        onAddToCart={() => addToCart(item.product.id)}
+                        onIncrement={() => addToCart(item.product.id)}
+                        onDecrement={() => {}}
+                        onRemove={() => {}}
+                        onClick={() => {}}
+                        showRemoveButton={false}
+                      />
                     ))}
-                  </ul>
-                </li>
+                  </div>
+                  <button
+                    onClick={() => handleRepeatOrder(purchase.items)}
+                    className="repeat-order-button"
+                  >
+                    Повторить заказ
+                  </button>
+                </div>
               ))}
-            </ul>
+            </div>
           ) : (
             <p>Покупок пока нет</p>
           )}
