@@ -1,46 +1,23 @@
-# Getting Started with Create React App
+# Описание веб-приложения BlinkBasket
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+"BlinkBasket" — это веб-приложение, разработанное для демонстрации функциональности интернет-магазина. Приложение позволяет пользователям просматривать каталог товаров, организованный по категориям, искать товары, добавлять их в корзину, оформлять заказы с проверкой платёжных данных и адреса доставки, а также управлять профилем с историей покупок. Уникальной особенностью является расчёт общей калорийности товаров в корзине, что делает приложение полезным для пользователей, следящих за питанием. "BlinkBasket" демонстрирует возможности React для создания интерактивных, модульных и масштабируемых веб-приложений.
 
-## Available Scripts
+## Ключевые функции
 
-In the project directory, you can run:
+- **Просмотр каталога**: Товары организованы по категориям с возможностью сортировки по цене и просмотра подробной информации в модальном окне.
+- **Поиск товаров**: Быстрый поиск по названию с отображением отфильтрованных результатов и сортировкой.
+- **Управление корзиной**: Добавление, изменение количества и удаление товаров с автоматическим расчётом общей стоимости и калорийности.
+- **Оформление заказов**: Завершение покупки с обязательной проверкой данных карты и адреса доставки, сохранённых в профиле.
+- **Профиль пользователя**: Ввод и сохранение данных карты (номер, срок действия, CVV) и адреса доставки, просмотр истории покупок с возможностью повторить прошлые заказы.
+- **Уведомления**: Автоматическое уведомление в профиле, если данные карты или адрес не заполнены, с таймером (5 секунд).
+- **Сохраняемость**: Сохранение корзины, истории покупок, данных карты и адреса в `localStorage` для сохранения между сессиями.
 
-### `npm start`
+## Использованные технологии
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **React**: Библиотека для построения компонентного интерфейса с использованием виртуального DOM.
+- **TypeScript**: Для написания логики и строгой типизации данных (интерфейсы `ICategory`, `IProducts`, `Purchase`, `CardDetails`).
+- **React Router**: Для клиентской маршрутизации (Главная, Категории, Товары, Поиск, Корзина, Профиль).
+- **React Context API**: Управление глобальным состоянием через `CartContext` (корзина, история, данные карты, адрес).
+- **HTML5 и CSS3**: Для структурирования контента и адаптивной стилизации (модульные CSS-файлы).
+- **LocalStorage**: Для персистентного хранения данных пользователя.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
