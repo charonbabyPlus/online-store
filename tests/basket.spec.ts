@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Basket Page', () => {
   test.beforeEach(async ({ page }) => {
-    await page.waitForTimeout(2000); // Ожидание 2 секунды для запуска сервера
+    await page.waitForTimeout(2000); 
     await page.goto('http://localhost:3000/basket');
     await page.evaluate(() => localStorage.clear());
     await page.reload();
@@ -18,7 +18,7 @@ test.describe('Basket Page', () => {
   });
 
   test('should redirect to profile when profile data is missing', async ({ page }) => {
-    // Добавляем товар в корзину
+   
     await page.evaluate(() => {
       localStorage.setItem('cart', JSON.stringify({ '1': 2 }));
     });
@@ -30,7 +30,7 @@ test.describe('Basket Page', () => {
   });
 
   test('should complete purchase with profile data', async ({ page }) => {
-    // Настраиваем данные профиля и корзину
+    
     await page.evaluate(() => {
       localStorage.setItem('cart', JSON.stringify({ '1': 2 }));
       localStorage.setItem('cardDetails', JSON.stringify({
@@ -53,11 +53,10 @@ test.describe('Basket Page', () => {
       purchaseHistory: localStorage.getItem('purchaseHistory'),
     }));
 
-    // Проверяем, что данные существуют
+
     expect(localStorageData.cart).not.toBeNull();
     expect(localStorageData.purchaseHistory).not.toBeNull();
 
-    // Безопасный парсинг с утверждением типа
     if (localStorageData.cart && localStorageData.purchaseHistory) {
       expect(JSON.parse(localStorageData.cart)).toEqual({});
       expect(JSON.parse(localStorageData.purchaseHistory)).toHaveLength(1);
